@@ -13,7 +13,7 @@ class linkData:
         Y_test = [outputDict[label] for inp, label in testSet]
 
         model = nodeModel(inputDim, outputDim)
-        model.train(X_train, Y_train, epochs=100, lr=0.2)
+        model.train(X_train, Y_train, epochs=12, lr=0.25)
 
         set_as_label = {0: 'O', 1: 'X'}
         
@@ -27,8 +27,8 @@ class linkData:
             is_correct = pred_class == true_class
             if is_correct:
                 correct += 1
-            print(f"Sample {i+1}: Predicted = {set_as_label[pred_class]} ({confidence*100:.2f}%), "
-                  f"Actual = {set_as_label[true_class]} {'✅' if is_correct else '❌'}")
+            print(f"Sample {i+1}: Predicted = {set_as_label[pred_class]}, Confidence = ({confidence*100:.2f}%), "
+                  f"Actual = {set_as_label[true_class]} {'true' if is_correct else 'false'}")
 
         accuracy = correct / len(Y_test)
         print(f"\nTest Accuracy: {accuracy * 100:.2f}%")

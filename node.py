@@ -32,7 +32,7 @@ class nodeModel:
 
         return [self.softmax(row) for row in z]
 
-    def train(self, X, Y, epochs=100, lr=0.2):
+    def train(self, X, Y, epochs=12, lr=0.25):
         for epoch in range(epochs):
             output = self.forward(X)
             MSEloss = sum(
