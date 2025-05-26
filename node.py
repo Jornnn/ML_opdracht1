@@ -3,64 +3,53 @@ import math
 
 class nodeModel:
     def __init__(self, input_dim, output_dim):
-        self.W = [[random.uniform(-1, 1) for _ in range(output_dim)] for _ in range(input_dim)]
+        assert output_dim == 2, "This version only supports two output classes."
+        self.input_dim = input_dim
+        # Separate weights and bias for each class
+        self.W_0 = [random.uniform(-1, 1) for _ in range(input_dim)]
+        self.b_0 = random.uniform(-1, 1)
 
-    def softmax(self, x):
-        max_val = max(x)
-        exps = [math.exp(i - max_val) for i in x]
+        self.W_1 = [random.uniform(-1, 1) for _ in range(input_dim)]
+        self.b_1 = random.uniform(-1, 1)
+
+    def softmax(self, scores):
+        max_score = max(scores)
+        exps = [math.exp(s - max_score) for s in scores]
         sum_exps = sum(exps)
-        return [j / sum_exps for j in exps]
+        return [e / sum_exps for e in exps]
 
-    def dot(self, a, b):
-        result = []
-        for i in range(len(a)):
-            row = []
-            for j in range(len(b[0])):
-                s = 0
-                for k in range(len(b)):
-                    s += a[i][k] * b[k][j]
-                row.append(s)
-            result.append(row)
-        return result
-
-    def transpose(self, matrix):
-        return list(map(list, zip(*matrix)))
-
-
-    def forward(self, X):
-        z = self.dot(X, self.W)
-
-        return [self.softmax(row) for row in z]
+    def forward(self, x):
+        # Manually compute the scores
+        score_0 = sum(x[i] * self.W_0[i] for i in range(self.input_dim)) + self.b_0
+        score_1 = sum(x[i] * self.W_1[i] for i in range(self.input_dim)) + self.b_1
+        return self.softmax([score_0, score_1])
 
     def train(self, X, Y, epochs=12, lr=0.25):
         for epoch in range(epochs):
-            output = self.forward(X)
-            MSEloss = sum(
-                sum((y[j] - o[j]) ** 2 for j in range(len(y)))
-                for y, o in zip(Y, output)
-            ) / len(Y)
+            total_loss = 0
+            for x, y in zip(X, Y):  # y is expected as [0, 1] or [1, 0]
+                output = self.forward(x)
+                loss = sum((y[i] - output[i]) ** 2 for i in range(2))
+                total_loss += loss
 
-            dz = [[2 * (o[j] - y[j]) for j in range(len(o))] for o, y in zip(output, Y)]
-            dW = self.dot(self.transpose(X), dz)
+                # Compute gradients and update weights for both classes
+                for i in range(self.input_dim):
+                    grad_0 = 2 * (output[0] - y[0]) * output[0] * (1 - output[0]) * x[i]
+                    grad_1 = 2 * (output[1] - y[1]) * output[1] * (1 - output[1]) * x[i]
 
-            for i in range(len(self.W)):
-                for j in range(len(self.W[0])):
-                    self.W[i][j] -= lr * dW[i][j]
-            
+                    self.W_0[i] -= lr * grad_0
+                    self.W_1[i] -= lr * grad_1
 
-            if epoch % 1 == 0:
-                print(f"Epoch {epoch} - MSELoss: {MSEloss:.4f}")
+                self.b_0 -= lr * 2 * (output[0] - y[0]) * output[0] * (1 - output[0])
+                self.b_1 -= lr * 2 * (output[1] - y[1]) * output[1] * (1 - output[1])
 
-    # def predict(self, X):
-    #     output = self.forward(X)
-    #     return [row.index(max(row)) for row in output]
-    
+            print(f"Epoch {epoch} - MSELoss: {total_loss / len(X):.4f}")
+
     def predict(self, X):
-        output = self.forward(X)
         predictions = []
-        for row in output:
-            predicted_class = row.index(max(row))
-            confidence = max(row)  # Softmax value for predicted class
-            predictions.append((predicted_class, confidence))
+        for x in X:
+            output = self.forward(x)
+            label = output.index(max(output))
+            confidence = max(output)
+            predictions.append((label, confidence))
         return predictions
-
