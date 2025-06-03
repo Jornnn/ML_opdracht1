@@ -52,7 +52,7 @@ class nodeModel:
     
     def draw_result(self, MSEloss, title):
         epochs = list(range(len(MSEloss)))  # x-as: 0, 1, ..., n
-        plt.plot(epochs, MSEloss, '-b', label='loss')
+        plt.plot(epochs, MSEloss, '-b', label='loss', color= "red")
 
         plt.xlabel("Epoch")
         plt.ylabel("Loss")
@@ -64,7 +64,7 @@ class nodeModel:
 
 
 
-    def train(self, X, Y, epochs=10, lr=0.1):
+    def train(self, X, Y, epochs=1000, lr=0.01):
         lst_loss = []
         for epoch in range(epochs):
             output = self.forward(X)
