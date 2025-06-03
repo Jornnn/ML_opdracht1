@@ -1,5 +1,5 @@
 from data import trainingSet, testSet, outputDict, inputDim, outputDim, hiddenDim
-from node import nodeModel  
+from node import nodeModel 
 
 class linkData:
     def __init__(self):
@@ -13,12 +13,16 @@ class linkData:
         Y_test = [outputDict[label] for inp, label in testSet]
 
         model = nodeModel(inputDim, outputDim, hiddenDim)
-        model.train(X_train, Y_train, epochs=100, lr=0.2)
+        lst_loss = model.train(X_train, Y_train, epochs=100, lr=0.1)
 
         set_as_label = {0: 'O', 1: 'X'}
         
         # Use the prediction method that returns (class, confidence)
         predictions = model.predict(X_test)
+
+        model.draw_result(lst_loss, "MSEloss")
+
+
 
         print("Test Results:")
         correct = 0
@@ -32,3 +36,4 @@ class linkData:
 
         accuracy = correct / len(Y_test)
         print(f"\nTest Accuracy: {accuracy * 100:.2f}%")
+        

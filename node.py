@@ -1,6 +1,7 @@
 import random
 import math
 import numpy as np
+import matplotlib.pyplot as plt
 
 class nodeModel:
     def __init__(self, input_dim, output_dim, hidden_dim):
@@ -30,7 +31,7 @@ class nodeModel:
         #     result.append(row)
 
         # VERSION 2.2
-        result = np.dot(a, b, out=None)
+        result = np.dot(a, b)
         return result
 
     def transpose(self, matrix):
@@ -48,9 +49,23 @@ class nodeModel:
         self.Z2 = self.dot(self.A1, self.W2)  # Pre-activation for output layer
         output = [self.softmax(row) for row in self.Z2]  # Softmax activation
         return output
+    
+    def draw_result(self, MSEloss, title):
+        epochs = list(range(len(MSEloss)))  # x-as: 0, 1, ..., n
+        plt.plot(epochs, MSEloss, '-b', label='loss')
+
+        plt.xlabel("Epoch")
+        plt.ylabel("Loss")
+        plt.legend(loc='upper left')
+        plt.title(title)
+
+        plt.savefig(title + ".png")  # Opslaan vóór tonen
+        plt.show()
 
 
-    def train(self, X, Y, epochs=10, lr=0.2):
+
+    def train(self, X, Y, epochs=10, lr=0.1):
+        lst_loss = []
         for epoch in range(epochs):
             output = self.forward(X)
 
@@ -81,11 +96,14 @@ class nodeModel:
                     self.W1[i][j] -= lr * dW1[i][j]
 
             if epoch % 1 == 0:
+                lst_loss.append(MSEloss)
                 print(f"Epoch {epoch} - MSELoss: {MSEloss:.4f}")
                         # Stop early if loss is low enough
-                        
+
             if MSEloss < 0.01:
                 break
+        return lst_loss
+
 
     
     def predict(self, X):
@@ -96,4 +114,6 @@ class nodeModel:
             confidence = max(row)  # Softmax value for predicted class
             predictions.append((predicted_class, confidence))
         return predictions
+    
+
 
