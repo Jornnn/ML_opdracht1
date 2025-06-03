@@ -1,5 +1,6 @@
 import random
 import math
+import matplotlib.pyplot as plt
 
 class nodeModel:
     def __init__(self, input_dim, output_dim):
@@ -25,6 +26,7 @@ class nodeModel:
         return self.softmax([score_0, score_1])
 
     def train(self, X, Y, epochs=1000, lr=0.2):
+        lst_loss = []
         for epoch in range(epochs):
             total_loss = 0
             for x, y in zip(X, Y):  # y is expected as [0, 1] or [1, 0]
@@ -43,10 +45,13 @@ class nodeModel:
                 self.b_0 -= lr * 2 * (output[0] - y[0]) * output[0] * (1 - output[0])
                 self.b_1 -= lr * 2 * (output[1] - y[1]) * output[1] * (1 - output[1])
 
+            lst_loss.append(total_loss/len(x))
             print(f"Epoch {epoch} - MSELoss: {total_loss / len(X):.4f}")
 
             if total_loss / len(X) < 0.01:
                 break
+            
+        return lst_loss
 
     def predict(self, X):
         predictions = []
@@ -56,3 +61,15 @@ class nodeModel:
             confidence = max(output)
             predictions.append((label, confidence))
         return predictions
+    
+    def draw_result(self, MSEloss, title):
+        epochs = list(range(len(MSEloss)))  # x-as: 0, 1, ..., n
+        plt.plot(epochs, MSEloss, '-b', label='loss', color= "purple")
+
+        plt.xlabel("Epoch")
+        plt.ylabel("Loss")
+        plt.legend(loc='upper left')
+        plt.title(title)
+
+        plt.savefig(title + ".png")  # Opslaan vóór tonen
+        plt.show()
