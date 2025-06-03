@@ -13,7 +13,7 @@ class linkData:
         Y_test = [outputDict[label] for inp, label in testSet]
 
         model = nodeModel(inputDim, outputDim)
-        lst_loss = model.train(X_train, Y_train, epochs=1000, lr=0.2)
+        lst_loss = model.train(X_train, Y_train, epochs=5000, lr=0.01)
 
         model.draw_result(lst_loss, "MSEloss")
 

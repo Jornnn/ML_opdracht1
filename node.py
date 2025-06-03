@@ -25,7 +25,7 @@ class nodeModel:
         score_1 = sum(x[i] * self.W_1[i] for i in range(self.input_dim)) + self.b_1
         return self.softmax([score_0, score_1])
 
-    def train(self, X, Y, epochs=1000, lr=0.2):
+    def train(self, X, Y, epochs=5000, lr=0.01):
         lst_loss = []
         for epoch in range(epochs):
             total_loss = 0
