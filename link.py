@@ -16,14 +16,13 @@ class linkData:
         lst_loss = model.train(X_train, Y_train, epochs=1000, lr=0.01)
 
         set_as_label = {0: 'O', 1: 'X'}
-        
-        # Use the prediction method that returns (class, confidence)
+    
         predictions = model.predict(X_test)
 
         model.draw_result(lst_loss, "MSEloss")
 
 
-
+        # Print out the test result, confidence and actual awnser
         print("Test Results:")
         correct = 0
         for i, ((pred_class, confidence), true_vec) in enumerate(zip(predictions, Y_test)):
