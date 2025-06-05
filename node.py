@@ -13,6 +13,7 @@ class nodeModel:
         self.W_1 = [random.uniform(-1, 1) for _ in range(input_dim)]
         self.b_1 = random.uniform(-1, 1)
 
+    # Softmax function made using this source: https://www.loekvandenouweland.com/content/softmax-with-plain-python.html
     def softmax(self, scores):
         max_score = max(scores)
         exps = [math.exp(s - max_score) for s in scores]
@@ -25,6 +26,7 @@ class nodeModel:
         score_1 = sum(x[i] * self.W_1[i] for i in range(self.input_dim)) + self.b_1
         return self.softmax([score_0, score_1])
 
+    # Trains the model, source: https://www.geeksforgeeks.org/backpropagation-in-neural-network/
     def train(self, X, Y, epochs=5000, lr=0.01):
         lst_loss = []
         for epoch in range(epochs):
@@ -34,7 +36,7 @@ class nodeModel:
                 loss = sum((y[i] - output[i]) ** 2 for i in range(2))
                 total_loss += loss
 
-                # Compute gradients and update weights for both classes
+                # Updates weights for both classes
                 for i in range(self.input_dim):
                     grad_0 = 2 * (output[0] - y[0]) * output[0] * (1 - output[0]) * x[i]
                     grad_1 = 2 * (output[1] - y[1]) * output[1] * (1 - output[1]) * x[i]

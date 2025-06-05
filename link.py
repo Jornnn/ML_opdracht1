@@ -19,9 +19,9 @@ class linkData:
 
         set_as_label = {0: 'O', 1: 'X'}
         
-        # Use the prediction method that returns (class, confidence)
         predictions = model.predict(X_test)
 
+        # Prints out the prediction and confidence of the model and the actual awnser
         print("Test Results:")
         correct = 0
         for i, ((pred_class, confidence), true_vec) in enumerate(zip(predictions, Y_test)):
