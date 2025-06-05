@@ -68,7 +68,7 @@ class nodeModel:
         plt.show()
 
 
-    # Trains the model
+    # Trains the model, source: https://www.geeksforgeeks.org/backpropagation-in-neural-network/
     def train(self, X, Y, epochs=1000, lr=0.01):
         lst_loss = []
         for epoch in range(epochs):
